@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "../models/User";
+import AgentRating from "../models/AgentRating";
 
 export const getAgent = async (req: Request, res: Response) => {
 	try {
@@ -26,9 +27,26 @@ export const getAgent = async (req: Request, res: Response) => {
 			return;
 		}
 
+		const agentRatings = await AgentRating.find({
+			agent: agentId,
+		});
+		const ratingNumber = agentRatings.length;
+		const rating =
+			ratingNumber == 0
+				? 0
+				: (
+						agentRatings.reduce((totalRating, aRating) => {
+							return totalRating + aRating.rating;
+						}, 0) / ratingNumber
+				  ).toFixed();
+
 		res.status(200).json({
 			message: "Agent fetched successfully",
-			agent,
+			agent: {
+				...agent.toObject(),
+				rating,
+				ratingNumber,
+			},
 		});
 	} catch (error) {
 		// console.log("error", error);

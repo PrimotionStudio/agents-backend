@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Property from "../models/Property";
 import User from "../models/User";
+import PropertyRating from "../models/PropertyRating";
 
 export const createProperty = async (
 	req: Request & {
@@ -101,9 +102,32 @@ export const getAllProperties = async (req: Request, res: Response) => {
 		)
 			properties = await Property.find();
 		else properties = await Property.find().populate("agent");
+
+		const propertiesWithRatings = await Promise.all(
+			properties.map(async (prop: any) => {
+				const propertyRatings = await PropertyRating.find({
+					property: prop._id,
+				});
+				const ratingNumber = propertyRatings.length;
+				const rating =
+					ratingNumber == 0
+						? 0
+						: (
+								propertyRatings.reduce((totalRating, pRating) => {
+									return totalRating + pRating.rating;
+								}, 0) / ratingNumber
+						  ).toFixed();
+
+				return {
+					...prop.toObject(),
+					rating,
+					ratingNumber,
+				};
+			})
+		);
 		res.status(200).json({
 			message: "Properties fetched successfully",
-			properties,
+			properties: propertiesWithRatings,
 		});
 	} catch (error) {
 		// console.log("error", error);
@@ -132,9 +156,26 @@ export const getAProperty = async (req: Request, res: Response) => {
 			return;
 		}
 
+		const propertyRatings = await PropertyRating.find({
+			property: propertyId,
+		});
+		const ratingNumber = propertyRatings.length;
+		const rating =
+			ratingNumber == 0
+				? 0
+				: (
+						propertyRatings.reduce((totalRating, pRating) => {
+							return totalRating + pRating.rating;
+						}, 0) / ratingNumber
+				  ).toFixed();
+
 		res.status(200).json({
 			message: "Property fetched successfully",
-			property,
+			property: {
+				...property.toObject(),
+				rating,
+				ratingNumber,
+			},
 		});
 	} catch (error) {
 		// console.log("error", error);
