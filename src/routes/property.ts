@@ -11,7 +11,7 @@ const router: Router = express.Router();
 router.get("/", getAllProperties);
 router.get("/:propertyId", getAProperty);
 
-// router.use(isLoggedIn);
+router.use(isLoggedIn);
 router.post("/create", createProperty);
 
 export default router;

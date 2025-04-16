@@ -1,10 +1,4 @@
-import express, {
-	Express,
-	Application,
-	Request,
-	Response,
-	NextFunction,
-} from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import morgan from "morgan";
@@ -30,11 +24,13 @@ app.use(morgan("dev"));
 // Register Routes
 import authRoutes from "./routes/auth";
 import propertyRoutes from "./routes/property";
-// import agentRoutes from "./routes/agent";
+import agentRoutes from "./routes/agent";
+import userRoutes from "./routes/user";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/property", propertyRoutes);
-// app.use("/api/agent", agentRoutes);
+app.use("/api/agent", agentRoutes);
+app.use("/api/user", userRoutes);
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
 	res.json({ message: "Hello, World!" });

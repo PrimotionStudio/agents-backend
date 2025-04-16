@@ -123,8 +123,8 @@ export const getAProperty = async (req: Request, res: Response) => {
 			!authHeader.startsWith("Bearer ") ||
 			!authHeader.split(" ")[1]
 		)
-			property = await Property.findById(propertyId).populate("agent");
-		else property = await Property.findById(propertyId);
+			property = await Property.findById(propertyId);
+		else property = await Property.findById(propertyId).populate("agent");
 		if (!property) {
 			res.status(404).json({
 				message: "Property not found",
