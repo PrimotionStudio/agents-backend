@@ -26,11 +26,15 @@ import authRoutes from "./routes/auth";
 import propertyRoutes from "./routes/property";
 import agentRoutes from "./routes/agent";
 import userRoutes from "./routes/user";
+import agentRatingRoutes from "./routes/agentRating";
+import propertyRatingRoutes from "./routes/propertyRating";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/property", propertyRoutes);
 app.use("/api/agent", agentRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/agentRating", agentRatingRoutes);
+app.use("/api/propertyRating", propertyRatingRoutes);
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
 	res.json({ message: "Hello, World!" });

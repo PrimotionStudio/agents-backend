@@ -114,8 +114,7 @@ export const updateUser = async (
 			token,
 			process.env.JWT_SECRET as string
 		) as JwtPayload;
-		if (!decoded) {
-		}
+
 		if (decoded._id !== userId) {
 			res.status(403).json({
 				message: "Your are not permmited to perform this action",
@@ -177,6 +176,33 @@ export const changePassword = async (
 			});
 			return;
 		}
+
+		const authHeader = req.headers.authorization;
+
+		if (!authHeader || !authHeader.startsWith("Bearer ")) {
+			res.status(401).json({ message: "Unauthorized - No token provided" });
+			return;
+		}
+
+		const token = authHeader.split(" ")[1];
+		if (!token) {
+			res.status(400).json({
+				message: "Your login session has expired",
+			});
+			return;
+		}
+		const decoded = jwt.verify(
+			token,
+			process.env.JWT_SECRET as string
+		) as JwtPayload;
+
+		if (decoded._id !== userId) {
+			res.status(403).json({
+				message: "Your are not permmited to perform this action",
+			});
+			return;
+		}
+
 		if (newPassword !== confirmNewPassword) {
 			res.status(400).json({
 				message: "Passwords do not match",
